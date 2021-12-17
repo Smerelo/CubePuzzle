@@ -6,7 +6,8 @@ using UnityEngine;
 public class SidesManager : MonoBehaviour
 {
     private Vector3 diff;
-    private int currentFace;
+    [HideInInspector]
+    public int currentFace;
     [SerializeField] Face[] sides;
     [SerializeField] Transform[] cameras;
     private const float OFFSET = 32f;
@@ -18,10 +19,35 @@ public class SidesManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     internal void SwitchSides(Face side)
+    {
+        if (currentFace == side.FaceNb)
+        {
+            return;
+        }
+        currentFace = side.FaceNb;
+        Vector3 nextSidePos = side.FacePos;
+        for (int i = 0; i < sides.Length; i++)
+        {
+            if (nextSidePos.x != 0)
+            {
+                sides[i].FacePos -= nextSidePos;
+                float tempx = sides[i].FacePos.x;
+                if (tempx > 2 || tempx < -1)
+                    sides[i].FacePos.x = tempx == 3 ? -1 : 2;
+                sides[i].transform.localPosition = sides[i].FacePos * OFFSET;
+                continue;
+            }
+               
+        }
+    }
+
+
+
+    /*internal void SwitchSides(Face side)
     {
         if (currentFace == side.FaceNb)
         {
@@ -69,5 +95,5 @@ public class SidesManager : MonoBehaviour
             sides[i].FacePos -= side.FacePos;
         }
         side.FacePos = Vector3.zero;
-    }
+    }*/
 }
