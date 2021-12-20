@@ -32,20 +32,67 @@ public class SidesManager : MonoBehaviour
         Vector3 nextSidePos = side.FacePos;
         for (int i = 0; i < sides.Length; i++)
         {
+            diff = sides[i].FacePos - nextSidePos;
+           
+            //Next movement is horizontal
             if (nextSidePos.x != 0)
             {
-                sides[i].FacePos -= nextSidePos;
-                float tempx = sides[i].FacePos.x;
-                if (tempx > 2 || tempx < -1)
-                    sides[i].FacePos.x = tempx == 3 ? -1 : 2;
-                sides[i].transform.localPosition = sides[i].FacePos * OFFSET;
-                continue;
+                if (sides[i].FacePos.y == 0)
+                {
+                    sides[i].FacePos -= nextSidePos;
+                    float tempx = sides[i].FacePos.x;
+                    if (tempx > 2 || tempx < -1)
+                        sides[i].FacePos.x = tempx == 3 ? -1 : 2;
+                    sides[i].transform.localPosition = sides[i].FacePos * OFFSET;
+                    continue;
+                }
+                else if (sides[i].FacePos.x == 0)
+                {
+                    if (MoveDiagonalSides(nextSidePos, i))
+                        continue;
+                    float dir = Vector3.Cross(sides[i].FacePos, nextSidePos).z;
+                    sides[i].transform.Rotate(0, 0, 90 * dir);
+                    cameras[i].RotateAround(cameras[i].position, cameras[i].forward, 90 * -dir);
+                }
             }
-               
+            //Next Movement is vertical
+            else
+            {
+                if (sides[i].FacePos.x == 0)
+                {
+                    sides[i].FacePos -= nextSidePos;
+                    float tempy = sides[i].FacePos.y;
+                    if (tempy > 2 || tempy < -1)
+                        sides[i].FacePos.y = tempy == 3 ? -1 : 2;
+                    sides[i].transform.localPosition = sides[i].FacePos * OFFSET;
+                    continue;
+                }
+                else if (sides[i].FacePos.y == 0)
+                {
+                    if (MoveDiagonalSides(nextSidePos, i))
+                        continue;
+                    float dir = Vector3.Cross(sides[i].FacePos, nextSidePos).z;
+                    sides[i].transform.Rotate(0, 0, 90 * dir);
+                    cameras[i].RotateAround(cameras[i].position, cameras[i].forward, 90 * -dir);
+                }
+
+            }
         }
     }
 
 
+    private bool MoveDiagonalSides(Vector3 nextSidePos, int i)
+    {
+        if (diff.magnitude > 2.2f)
+        {
+            sides[i].transform.localPosition = nextSidePos * OFFSET;
+            sides[i].transform.Rotate(0, 0, 180);
+            cameras[i].RotateAround(cameras[i].position, cameras[i].forward, 180);
+            sides[i].FacePos = nextSidePos;
+            return true;
+        }
+        return false;
+    }
 
     /*internal void SwitchSides(Face side)
     {
