@@ -7,7 +7,6 @@ using UnityEngine;
 public class PlayerScript : MonoBehaviour
 {
     [Header("Components")]
-    [SerializeField] private Transform cameraFollow;
      private CharacterController controller;
 
     [Header("Physics")]
@@ -50,15 +49,12 @@ public class PlayerScript : MonoBehaviour
 
     private void FixedUpdate()
     {
-        cameraFollow.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, -16f);
 
         oldVelocity = velocity;
-
         velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, 
                      IsGrounded ? accelerationTimeGrounded : accelerationTimeAirborne);
         Flip();
         velocity.y += gravity * Time.fixedDeltaTime;
-
         deltaPos = (oldVelocity + velocity) * 0.5f * Time.fixedDeltaTime;
         controller.Move(deltaPos);
     

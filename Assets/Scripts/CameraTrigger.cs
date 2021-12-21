@@ -7,11 +7,13 @@ public class CameraTrigger : MonoBehaviour
     private CameraManager cameraManager;
     private SidesManager sides;
     private PlayerActions player;
+    private CameraFollow cameraFollow;
     private Face face;
     void Start()
     {
         player = GameObject.Find("Player").GetComponent<PlayerActions>();
         cameraManager = GameObject.Find("CameraManager").GetComponent<CameraManager>();
+        cameraFollow = GameObject.Find("CameraFollow").GetComponent<CameraFollow>();
         sides = GameObject.Find("Map").GetComponent<SidesManager>();
         face = transform.parent.parent.gameObject.GetComponent<Face>();
     }
@@ -30,6 +32,7 @@ public class CameraTrigger : MonoBehaviour
             {
                 return;
             }
+            cameraFollow.AddRotation(face.FacePos, face.FaceNb);
             player.IsChangingZone = true;
             collision.transform.parent = face.transform;
             cameraManager.SwitchCamera(face.FaceNb);
